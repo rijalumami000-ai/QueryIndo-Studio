@@ -4,6 +4,7 @@ import { AuthorService } from '../services/authorService';
 import { ArticleService } from '../services/articleService';
 import { Toast } from '../utils/toast';
 import { ImageUtils } from '../utils/imageUtils';
+import { ThemeService } from '../services/themeService';
 
 import { ArticleEditor } from './admin/ArticleEditor';
 import { AuthorsManager } from './admin/AuthorsManager';
@@ -33,6 +34,15 @@ export class AdminCMS {
   constructor(onArticlesChange: () => void) {
     this.articles = ArticleService.getArticles();
     this.onArticlesChange = onArticlesChange;
+
+    if (this.articles.length === 0) {
+      ArticleService.syncWithBackend(false).then(synced => {
+        if (synced && synced.length > 0) {
+          this.articles = synced;
+          this.onArticlesChange();
+        }
+      }).catch(() => {});
+    }
   }
 
   public renderAdminModalHTML(): string {
@@ -62,7 +72,16 @@ export class AdminCMS {
               <span style="font-size: 0.75rem; color: var(--accent-cyan); font-family: var(--font-mono);">Protected 256-Bit SSL Guard</span>
             </div>
           </div>
-          <button class="btn-close" id="admin-login-close-btn" style="background: var(--bg-tertiary); border: 1px solid var(--border-color); width: 32px; height: 32px; border-radius: 50%; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Kembali ke Beranda">✕</button>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <button class="btn-theme-toggle" id="login-theme-toggle-btn" style="background: var(--bg-tertiary); border: 1px solid var(--border-color); width: 32px; height: 32px; border-radius: 50%; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Ganti Tema (Terang / Gelap)">
+              ${ThemeService.getTheme() === 'light' ? `
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-amber);"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+              ` : `
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-cyan);"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+              `}
+            </button>
+            <button class="btn-close" id="admin-login-close-btn" style="background: var(--bg-tertiary); border: 1px solid var(--border-color); width: 32px; height: 32px; border-radius: 50%; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Kembali ke Portal Utama">✕</button>
+          </div>
         </div>
 
         <div style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 2rem;">
@@ -261,20 +280,41 @@ export class AdminCMS {
               </h2>
             </div>
 
-            <div style="display: flex; align-items: center; gap: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <!-- Sinkronkan DB Button -->
+              <button id="cms-btn-sync-db" style="padding: 0.45rem 0.85rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: var(--radius-full); font-size: 0.78rem; font-weight: 700; color: var(--accent-cyan); display: flex; align-items: center; gap: 0.4rem; cursor: pointer; transition: all 0.2s;" title="Tarik pembaruan data langsung dari database PostgreSQL">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                <span>Sinkronkan DB</span>
+              </button>
+
+              <!-- Link to Main Public Portal -->
+              <a href="https://queryindo.com" target="_blank" rel="noopener noreferrer" style="text-decoration: none; padding: 0.45rem 0.85rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: var(--radius-full); font-size: 0.78rem; font-weight: 700; color: var(--text-secondary); display: flex; align-items: center; gap: 0.4rem; transition: all 0.2s;" title="Buka Portal Berita Publik di Tab Baru">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                <span>Portal Utama</span>
+              </a>
+
+              <!-- Theme Toggle Button -->
+              <button id="cms-theme-toggle-btn" style="width: 2.2rem; height: 2.2rem; border-radius: 50%; background: var(--bg-tertiary); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-primary); transition: all 0.2s;" title="Ganti Tema (Terang / Gelap)">
+                ${ThemeService.getTheme() === 'light' ? `
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-amber);"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                ` : `
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-cyan);"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                `}
+              </button>
+
               ${this.activeTab === 'articles' ? `
                 <div style="position: relative;">
-                  <input type="text" id="cms-search-input" value="${this.searchKeyword}" placeholder="Cari judul atau tag berita..." style="width: 260px; padding: 0.5rem 0.75rem 0.5rem 2.2rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: var(--radius-full); font-size: 0.8rem; color: var(--text-primary);" />
+                  <input type="text" id="cms-search-input" value="${this.searchKeyword}" placeholder="Cari judul..." style="width: 200px; padding: 0.5rem 0.75rem 0.5rem 2.2rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: var(--radius-full); font-size: 0.8rem; color: var(--text-primary);" />
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position: absolute; left: 0.8rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                 </div>
-                <button id="cms-btn-new-article" style="padding: 0.55rem 1.25rem; background: var(--gradient-brand); color: #000; font-weight: 800; border-radius: var(--radius-full); font-size: 0.825rem; display: flex; align-items: center; gap: 0.4rem; box-shadow: var(--shadow-glow); cursor: pointer;">
+                <button id="cms-btn-new-article" style="padding: 0.55rem 1.15rem; background: var(--gradient-brand); color: #000; font-weight: 800; border-radius: var(--radius-full); font-size: 0.825rem; display: flex; align-items: center; gap: 0.4rem; box-shadow: var(--shadow-glow); cursor: pointer;">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-                  <span>Tulis Berita Baru</span>
+                  <span>Tulis Berita</span>
                 </button>
               ` : ''}
 
               <!-- Close Modal Button -->
-              <button id="admin-modal-close-btn" class="btn-close" style="width: 2.2rem; height: 2.2rem; border-radius: 50%; background: var(--bg-tertiary); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-primary);" title="Kembali ke Beranda">✕</button>
+              <button id="admin-modal-close-btn" class="btn-close" style="width: 2.2rem; height: 2.2rem; border-radius: 50%; background: var(--bg-tertiary); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-primary);" title="Kembali ke Portal Utama">✕</button>
             </div>
           </header>
 
@@ -624,7 +664,7 @@ export class AdminCMS {
       
       loginCloseBtn?.addEventListener('click', () => {
         if (window.location.pathname.startsWith('/admin')) {
-          window.location.href = '/';
+          window.location.href = 'https://queryindo.com';
         } else {
           const modal = document.getElementById('admin-cms-modal');
           if (modal) modal.classList.remove('open');
@@ -679,6 +719,38 @@ export class AdminCMS {
         window.dispatchEvent(new CustomEvent('modal-closed'));
       }
     });
+
+    // Theme Mode Toggle Event Handlers
+    modalElem.querySelectorAll('#cms-theme-toggle-btn, #login-theme-toggle-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        ThemeService.toggleTheme();
+        modalElem.innerHTML = this.renderAdminModalHTML();
+        this.bindAdminEvents(modalElem);
+      });
+    });
+
+    // Manual DB Sync Button Handler
+    const syncDbBtn = modalElem.querySelector('#cms-btn-sync-db') as HTMLButtonElement;
+    if (syncDbBtn) {
+      syncDbBtn.addEventListener('click', async () => {
+        syncDbBtn.disabled = true;
+        const origContent = syncDbBtn.innerHTML;
+        syncDbBtn.innerHTML = '<span>Menyinkronkan...</span>';
+        try {
+          const syncedArticles = await ArticleService.syncWithBackend(false);
+          await AuthorService.syncWithBackend();
+          this.articles = ArticleService.getArticles();
+          this.onArticlesChange();
+          Toast.show(`Berhasil sinkronisasi! ${syncedArticles.length} artikel aktif dari database PostgreSQL.`);
+          this.refreshDashboard(modalElem);
+        } catch (err) {
+          Toast.show('Gagal menyinkronkan data dengan database.');
+        } finally {
+          syncDbBtn.disabled = false;
+          syncDbBtn.innerHTML = origContent;
+        }
+      });
+    }
 
     // Sidebar Tab Switcher
     modalElem.querySelectorAll('.nav-sidebar-link').forEach(btn => {
