@@ -18,11 +18,13 @@
   color: var(--text-primary);
 }
 .nav-sidebar-link.active {
-  background: rgba(37, 99, 235, 0.12);
-  border-color: rgba(59, 130, 246, 0.25);
-  color: #60a5fa;
-  font-weight: 700;
-  box-shadow: none;
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+.nav-sidebar-link.active svg {
+  color: var(--accent-primary);
 }
 
 /* Fullscreen Overlay for CMS Modal */
@@ -69,7 +71,7 @@
   border-radius: 4px;
 }
 .cms-scroll-view::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-cyan);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 /* Editorial Formatting Toolbar Styling */
@@ -156,24 +158,24 @@
 }
 
 #wysiwyg-editor-canvas .article-inline-image.is-selected {
-  outline: 2px solid #00f2fe !important;
+  outline: 2px solid var(--accent-primary) !important;
   outline-offset: 2px;
   box-shadow: 0 4px 20px rgba(0, 242, 254, 0.25);
 }
 
 #wysiwyg-editor-canvas .article-inline-image.is-dragging {
   opacity: 0.35;
-  outline: 2px dashed #00f2fe !important;
+  outline: 2px dashed var(--accent-primary) !important;
   cursor: grabbing !important;
 }
 
 /* WYSIWYG Drag & Drop Indicator Line */
 .wysiwyg-drop-indicator {
   height: 4px;
-  background: #00f2fe;
+  background: var(--accent-primary);
   border-radius: 2px;
   margin: 0.75rem 0;
-  box-shadow: 0 0 14px rgba(0, 242, 254, 0.9), 0 0 4px #00f2fe;
+  box-shadow: 0 0 14px rgba(0, 242, 254, 0.9), 0 0 4px var(--accent-primary);
   pointer-events: none;
   position: relative;
   z-index: 100;
@@ -186,7 +188,7 @@
   top: -24px;
   left: 50%;
   transform: translateX(-50%);
-  background: #00f2fe;
+  background: var(--accent-primary);
   color: #000000;
   font-size: 0.68rem;
   font-weight: 800;
@@ -202,7 +204,7 @@
   width: 10px;
   height: 10px;
   background: #ffffff;
-  border: 1.5px solid #00f2fe;
+  border: 1.5px solid var(--accent-primary);
   border-radius: 2px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
   z-index: 40;
@@ -375,4 +377,18 @@
   background: rgba(0, 242, 254, 0.12);
   border-color: var(--accent-cyan);
   color: var(--accent-cyan);
+}
+
+/* Senior Tag Badges */
+.tag-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-xs);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: 1px solid var(--border-color);
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
 }

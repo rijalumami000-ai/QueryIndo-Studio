@@ -58,68 +58,87 @@ export class AdminCMS {
     return this.renderFullscreenDashboardHTML(user);
   }
 
-  // Login View HTML
+  // Login View HTML — Dignified Executive Editorial Workstation
   private renderLoginViewHTML(): string {
     return `
       <div style="width: 100%; height: 100vh; display: flex; flex-direction: column; background: var(--bg-primary); color: var(--text-primary); overflow: hidden;">
-        <div class="modal-header-bar" style="background: var(--bg-secondary); padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color);">
-          <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <div style="width: 2.2rem; height: 2.2rem; background: var(--gradient-brand); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #000; font-weight: 800;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <!-- Clean Enterprise Top Bar -->
+        <header style="background: var(--bg-secondary); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color); height: 4rem; flex-shrink: 0;">
+          <div style="display: flex; align-items: center; gap: 0.85rem;">
+            <div style="width: 32px; height: 32px; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.95rem; color: var(--text-primary);">
+              Q
             </div>
             <div>
-              <h3 style="font-weight: 800; font-size: 1.1rem; color: var(--text-primary); margin: 0;">Otentikasi Redaksi QUERYINDO</h3>
-              <span style="font-size: 0.75rem; color: var(--accent-cyan); font-family: var(--font-mono);">Protected 256-Bit SSL Guard</span>
+              <div style="font-weight: 800; font-size: 0.95rem; letter-spacing: -0.02em; color: var(--text-primary); line-height: 1.2;">QUERYINDO</div>
+              <div style="font-size: 0.68rem; font-weight: 600; color: var(--text-muted); letter-spacing: 0.05em;">EDITORIAL STUDIO</div>
             </div>
           </div>
-          <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <button class="btn-theme-toggle" id="login-theme-toggle-btn" style="background: var(--bg-tertiary); border: 1px solid var(--border-color); width: 32px; height: 32px; border-radius: 50%; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Ganti Tema (Terang / Gelap)">
+          
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <!-- Live Status Indicator -->
+            <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.75rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: var(--radius-full); font-size: 0.75rem; color: var(--text-secondary);">
+              <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--accent-emerald); display: inline-block;"></span>
+              <span>Sistem Siap</span>
+            </div>
+
+            <!-- Theme Toggle -->
+            <button class="btn-theme-toggle" id="login-theme-toggle-btn" style="background: var(--bg-tertiary); border: 1px solid var(--border-color); width: 34px; height: 34px; border-radius: 50%; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s;" title="Ganti Tema (Terang / Gelap)">
               ${ThemeService.getTheme() === 'light' ? `
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-amber);"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
               ` : `
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-cyan);"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--text-secondary);"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
               `}
             </button>
-            <button class="btn-close" id="admin-login-close-btn" style="background: var(--bg-tertiary); border: 1px solid var(--border-color); width: 32px; height: 32px; border-radius: 50%; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Kembali ke Portal Utama">✕</button>
-          </div>
-        </div>
 
+            <!-- Link back to portal -->
+            <a href="https://queryindo.com" style="text-decoration: none; padding: 0.45rem 0.85rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: var(--radius-full); font-size: 0.78rem; font-weight: 600; color: var(--text-secondary); display: flex; align-items: center; gap: 0.4rem; transition: all 0.15s;" title="Buka Portal Berita Publik">
+              <span>Portal Utama ↗</span>
+            </a>
+          </div>
+        </header>
+
+        <!-- Center Login Container -->
         <div style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 2rem;">
-          <div style="width: 100%; max-width: 440px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2.5rem 2.25rem; box-shadow: var(--shadow-xl);">
+          <div style="width: 100%; max-width: 410px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 2.25rem 2rem; box-shadow: var(--shadow-lg);">
+            
             <div style="text-align: center; margin-bottom: 2rem;">
-              <div style="width: 3.8rem; height: 3.8rem; background: rgba(0, 242, 254, 0.08); border: 1.5px solid var(--accent-cyan); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem auto; color: var(--accent-cyan); font-size: 1.6rem; font-weight: 800; font-family: var(--font-main);">
-                $
+              <div style="width: 44px; height: 44px; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem auto; color: var(--text-primary);">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
               </div>
-              <h2 style="font-size: 1.45rem; font-weight: 800; margin: 0 0 0.4rem 0; color: var(--text-primary);">Dasbor Editorial</h2>
-              <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">Masuk dengan akun Founder & CEO atau Editor terverifikasi</p>
+              <h2 style="font-size: 1.3rem; font-weight: 700; margin: 0 0 0.35rem 0; color: var(--text-primary); letter-spacing: -0.02em;">Masuk ke QUERYINDO Studio</h2>
+              <p style="font-size: 0.825rem; color: var(--text-secondary); margin: 0; line-height: 1.4;">Ruang Kerja Redaksi & Manajemen Berita Enterprise</p>
             </div>
 
-            <form id="cms-login-form" style="display: flex; flex-direction: column; gap: 1.25rem;">
-              <div id="login-error-alert" style="display: none; padding: 0.75rem; background: rgba(244, 63, 94, 0.15); border: 1px solid var(--accent-rose); border-radius: var(--radius-md); color: var(--accent-rose); font-size: 0.8rem; font-weight: 600;">
+            <form id="cms-login-form" style="display: flex; flex-direction: column; gap: 1.2rem;">
+              <div id="login-error-alert" style="display: none; padding: 0.75rem; background: rgba(225, 29, 72, 0.08); border: 1px solid rgba(225, 29, 72, 0.25); border-radius: var(--radius-md); color: var(--accent-rose); font-size: 0.8rem; font-weight: 600;">
                 Email atau kata sandi tidak valid.
               </div>
 
               <div>
-                <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--text-secondary);">Email Redaksi / Akun Founder</label>
-                <input type="text" id="login-email" required value="Rijalumami000@gmail.com" placeholder="Rijalumami000@gmail.com" autocomplete="username" style="width: 100%; padding: 0.75rem 1rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-primary); font-size: 0.9rem; box-sizing: border-box;" />
+                <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--text-secondary);">Email Redaksi</label>
+                <input type="text" id="login-email" required value="Rijalumami000@gmail.com" placeholder="nama@queryindo.com" autocomplete="username" style="width: 100%; padding: 0.75rem 0.9rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-primary); font-size: 0.875rem; box-sizing: border-box; transition: border-color 0.15s ease;" />
               </div>
 
               <div>
-                <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--text-secondary);">Kata Sandi (Password)</label>
-                <input type="password" id="login-password" required value="" placeholder="Masukkan kata sandi..." autocomplete="current-password" style="width: 100%; padding: 0.75rem 1rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-primary); font-size: 0.9rem; box-sizing: border-box;" />
+                <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--text-secondary);">Kata Sandi</label>
+                <input type="password" id="login-password" required value="" placeholder="Masukkan kata sandi..." autocomplete="current-password" style="width: 100%; padding: 0.75rem 0.9rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-primary); font-size: 0.875rem; box-sizing: border-box; transition: border-color 0.15s ease;" />
               </div>
 
-              <button type="submit" id="btn-login-submit" style="margin-top: 0.5rem; width: 100%; padding: 0.85rem; background: var(--gradient-brand); color: #000; font-weight: 800; border-radius: var(--radius-md); border: none; font-size: 0.95rem; cursor: pointer; box-shadow: var(--shadow-glow); transition: all 0.2s ease;">
-                Buka Dasbor Redaksi →
+              <button type="submit" id="btn-login-submit" style="margin-top: 0.4rem; width: 100%; padding: 0.8rem; background: var(--accent-primary); color: #ffffff; font-weight: 600; border-radius: var(--radius-md); border: none; font-size: 0.875rem; cursor: pointer; transition: background 0.15s ease;">
+                Masuk ke Dasbor Redaksi →
               </button>
             </form>
+
+            <div style="margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color); text-align: center;">
+              <span style="font-size: 0.72rem; color: var(--text-muted);">Akses Terbatas • Khusus Dewan Redaksi & Tim Editorial Resmi</span>
+            </div>
           </div>
         </div>
       </div>
     `;
   }
 
-  // Format numeric statistics
+    // Format numeric statistics
   private formatStats(num: number): string {
     if (!num || num <= 0) return '0';
     if (num >= 1_000_000) return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
@@ -187,13 +206,13 @@ export class AdminCMS {
         <aside style="width: 260px; height: 100vh; flex-shrink: 0; background: var(--bg-secondary); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; justify-content: space-between; padding: 1.5rem 1rem; overflow-y: auto;">
           <div>
             <!-- Brand CMS Header -->
-            <div style="display: flex; align-items: center; gap: 0.75rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); margin-bottom: 1.5rem;">
-              <div style="width: 2.2rem; height: 2.2rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--accent-primary);">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <div style="display: flex; align-items: center; gap: 0.75rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border-color); margin-bottom: 1.25rem;">
+              <div style="width: 2rem; height: 2rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.95rem; color: var(--text-primary);">
+                Q
               </div>
               <div>
-                <h3 style="font-weight: 800; font-size: 1.05rem; letter-spacing: -0.02em; color: var(--text-primary);">QUERYINDO</h3>
-                <span style="font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent-cyan);">EDITORIAL CMS</span>
+                <h3 style="font-weight: 800; font-size: 0.95rem; letter-spacing: -0.02em; color: var(--text-primary); margin: 0; line-height: 1.2;">QUERYINDO</h3>
+                <span style="font-size: 0.68rem; font-weight: 600; color: var(--text-muted); letter-spacing: 0.04em;">EDITORIAL STUDIO</span>
               </div>
             </div>
 
@@ -254,7 +273,7 @@ export class AdminCMS {
               </div>
             </div>
 
-            <button id="cms-logout-btn" style="width: 100%; padding: 0.5rem; background: rgba(239, 68, 68, 0.1); color: var(--accent-rose); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: var(--radius-md); font-size: 0.8rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
+            <button id="cms-logout-btn" style="width: 100%; padding: 0.5rem; background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--border-color); transition: all 0.15s; border-radius: var(--radius-md); font-size: 0.8rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
               <span>Keluar Dasbor</span>
             </button>
@@ -304,10 +323,10 @@ export class AdminCMS {
 
               ${this.activeTab === 'articles' ? `
                 <div style="position: relative;">
-                  <input type="text" id="cms-search-input" value="${this.searchKeyword}" placeholder="Cari judul..." style="width: 200px; padding: 0.5rem 0.75rem 0.5rem 2.2rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: var(--radius-full); font-size: 0.8rem; color: var(--text-primary);" />
+                  <input type="text" id="cms-search-input" value="${this.searchKeyword}" placeholder="Cari judul..." style="width: 200px; padding: 0.5rem 0.75rem 0.5rem 2.2rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem; color: var(--text-primary); transition: border-color 0.15s ease;" />
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position: absolute; left: 0.8rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                 </div>
-                <button id="cms-btn-new-article" style="padding: 0.55rem 1.15rem; background: var(--gradient-brand); color: #000; font-weight: 800; border-radius: var(--radius-full); font-size: 0.825rem; display: flex; align-items: center; gap: 0.4rem; box-shadow: var(--shadow-glow); cursor: pointer;">
+                <button id="cms-btn-new-article" style="padding: 0.55rem 1.15rem; background: var(--accent-primary); color: #ffffff; font-weight: 600; border-radius: 6px; font-size: 0.825rem; display: flex; align-items: center; gap: 0.45rem; border: none; cursor: pointer;">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
                   <span>Tulis Berita</span>
                 </button>
@@ -330,23 +349,31 @@ export class AdminCMS {
               this.activeTab === 'social' ? SocialManager.render() :
               this.activeTab === 'settings' ? SettingsManager.render() :
               `
-              <!-- Analytics Top Summary Cards -->
-              <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-bottom: 2rem;">
-                <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: var(--radius-md);">
-                  <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;">Total Publikasi</div>
-                  <div style="font-size: 1.75rem; font-weight: 800; color: var(--text-primary); margin-top: 0.35rem;">${this.articles.length} <span style="font-size: 0.9rem; font-weight: 500; color: var(--text-muted);">Artikel</span></div>
+              <!-- Analytics Top Summary Cards (Dignified Enterprise Metrics) -->
+              <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.75rem;">
+                <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 1.25rem 1.4rem; border-radius: 8px;">
+                  <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">Total Naskah</div>
+                  <div style="font-size: 1.65rem; font-weight: 700; color: var(--text-primary); margin-top: 0.35rem; letter-spacing: -0.02em;">
+                    ${this.articles.length} <span style="font-size: 0.85rem; font-weight: 500; color: var(--text-muted);">Artikel</span>
+                  </div>
                 </div>
-                <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: var(--radius-md);">
-                  <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;">Total Pembaca (Views)</div>
-                  <div style="font-size: 1.75rem; font-weight: 800; color: var(--accent-cyan); margin-top: 0.35rem;">${this.formatStats(totalViews)}</div>
+                <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 1.25rem 1.4rem; border-radius: 8px;">
+                  <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">Total Pembaca</div>
+                  <div style="font-size: 1.65rem; font-weight: 700; color: var(--text-primary); margin-top: 0.35rem; letter-spacing: -0.02em;">
+                    ${this.formatStats(totalViews)} <span style="font-size: 0.85rem; font-weight: 500; color: var(--text-muted);">Views</span>
+                  </div>
                 </div>
-                <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: var(--radius-md);">
-                  <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;">Total Interaksi (Likes)</div>
-                  <div style="font-size: 1.75rem; font-weight: 800; color: var(--accent-emerald); margin-top: 0.35rem;">${this.formatStats(totalLikes)}</div>
+                <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 1.25rem 1.4rem; border-radius: 8px;">
+                  <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">Interaksi Pembaca</div>
+                  <div style="font-size: 1.65rem; font-weight: 700; color: var(--text-primary); margin-top: 0.35rem; letter-spacing: -0.02em;">
+                    ${this.formatStats(totalLikes)} <span style="font-size: 0.85rem; font-weight: 500; color: var(--text-muted);">Suka</span>
+                  </div>
                 </div>
-                <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: var(--radius-md);">
-                  <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;">Headline Utama (Featured)</div>
-                  <div style="font-size: 1.75rem; font-weight: 800; color: var(--accent-amber); margin-top: 0.35rem;">${featuredCount} <span style="font-size: 0.9rem; font-weight: 500; color: var(--text-muted);">Aktif</span></div>
+                <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 1.25rem 1.4rem; border-radius: 8px;">
+                  <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">Headline Utama</div>
+                  <div style="font-size: 1.65rem; font-weight: 700; color: var(--accent-amber); margin-top: 0.35rem; letter-spacing: -0.02em;">
+                    ${featuredCount} <span style="font-size: 0.85rem; font-weight: 500; color: var(--text-muted);">Aktif</span>
+                  </div>
                 </div>
               </div>
 
