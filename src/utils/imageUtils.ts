@@ -12,6 +12,11 @@ export class ImageUtils {
     if (!url) return '';
     let trimmed = url.trim();
 
+    // Auto-upgrade insecure http:// image URLs to https:// to prevent Mixed Content warnings
+    if (trimmed.startsWith('http://')) {
+      trimmed = 'https://' + trimmed.slice(7);
+    }
+
     // 1. Google Drive links (sharing, download, uc, etc.)
     if (trimmed.includes('drive.google.com') || trimmed.includes('drive.usercontent.google.com') || trimmed.includes('lh3.googleusercontent.com')) {
       let fileId = '';
