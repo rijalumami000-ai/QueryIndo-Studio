@@ -896,4 +896,47 @@ export class ApiService {
       return { success: false, message: 'Gagal menghubungi server CDN: ' + (err?.message || '') };
     }
   }
+
+  // ─── Media Management & Upload ──────────────────────────────────────────
+
+  // Upload image to server with CDN URL generation
+  public static async uploadMedia(file: File): Promise<{
+    success: boolean;
+    message?: string;
+    data?: {
+      url: string;
+      full_url: string;
+      cdn_url: string;
+      filename: string;
+      width: number;
+      height: number;
+      size_kb: number;
+    };
+  }> {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const token = AuthService.getToken();
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const res = await fetch(`${API_BASE_URL}/media/upload`, {
+        method: 'POST',
+        headers,
+        body: formData
+      });
+
+      const json = await res.json();
+      return json;
+    } catch (err: any) {
+      return {
+        success: false,
+        message: 'Gagal mengunggah media ke server: ' + (err?.message || '')
+      };
+    }
+  }
+
 }

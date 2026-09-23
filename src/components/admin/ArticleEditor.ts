@@ -5,6 +5,7 @@ import { AuthorService } from '../../services/authorService';
 import { ArticleService } from '../../services/articleService';
 import { Toast } from '../../utils/toast';
 import { ImageUtils } from '../../utils/imageUtils';
+import { ApiService } from '../../services/apiService';
 import { escapeHtml } from '../../utils/helpers';
 
 export class ArticleEditor {
@@ -290,16 +291,47 @@ export class ArticleEditor {
     }
 
     if (editImageFileInput) {
-      editImageFileInput.addEventListener('change', () => {
+      editImageFileInput.addEventListener('change', async () => {
         const file = editImageFileInput.files?.[0];
-        if (file) {
-          ImageUtils.processImageFile(file, 1200, 0.85, (dataUrl) => {
-            if (editImageInput) editImageInput.value = dataUrl;
-            if (editImagePreview) editImagePreview.src = dataUrl;
-            Toast.show('Gambar sampul berhasil diunggah dari perangkat!');
-          }, (err) => {
-            Toast.show(err, 'warning');
-          });
+        if (!file) return;
+
+        // Visual loading state
+        const uploadLabel = editorPage.querySelector('label[for="edit-image-file-input"] span') as HTMLElement;
+        const origLabel = uploadLabel ? uploadLabel.textContent : '';
+        if (uploadLabel) uploadLabel.textContent = '⏳ Mengunggah ke CDN...';
+        Toast.show('Mengunggah berkas gambar ke Cloudflare CDN server...', 'info');
+
+        try {
+          // Attempt server CDN upload
+          const uploadRes = await ApiService.uploadMedia(file);
+          if (uploadRes && uploadRes.success && uploadRes.data) {
+            const finalCDNUrl = uploadRes.data.cdn_url || uploadRes.data.full_url || uploadRes.data.url;
+            if (editImageInput) {
+              editImageInput.value = finalCDNUrl;
+              editImageInput.dispatchEvent(new Event('input'));
+            }
+            if (editImagePreview) {
+              editImagePreview.src = finalCDNUrl;
+            }
+            Toast.show(`✅ Berhasil diunggah ke CDN! (${uploadRes.data.size_kb} KB)`, 'success');
+          } else {
+            // Fallback to local image compression
+            ImageUtils.processImageFile(file, 1200, 0.85, (dataUrl) => {
+              if (editImageInput) {
+                editImageInput.value = dataUrl;
+                editImageInput.dispatchEvent(new Event('input'));
+              }
+              if (editImagePreview) editImagePreview.src = dataUrl;
+              Toast.show('Gambar disimpan secara lokal (Server offline)', 'warning');
+            }, (err) => {
+              Toast.show(uploadRes?.message || err, 'warning');
+            });
+          }
+        } catch (err: any) {
+          Toast.show('Gagal menghubungi endpoint upload server: ' + (err?.message || ''), 'warning');
+        } finally {
+          if (uploadLabel && origLabel) uploadLabel.textContent = origLabel;
+          editImageFileInput.value = '';
         }
       });
     }

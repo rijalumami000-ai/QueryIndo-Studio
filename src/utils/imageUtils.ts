@@ -58,6 +58,43 @@ export class ImageUtils {
   /**
    * Premium Scalloped Verified Seal (Similar to Meta Verified / Twitter X / Telegram Star)
    */
+  
+  /**
+   * Transforms any image URL (local upload or external) to QueryIndo CDN Resizer format.
+   * e.g. /uploads/articles/... -> /media/w_800,q_80/articles/...
+   */
+  public static toCDNUrl(url: string, width: number = 1200, quality: number = 80, crop: string = 'fit'): string {
+    if (!url) return '';
+    const trimmed = url.trim();
+
+    if (trimmed.includes('/media/w_') || trimmed.includes('/media/resizer')) {
+      return trimmed;
+    }
+
+    if (trimmed.startsWith('/uploads/') || trimmed.startsWith('uploads/')) {
+      const relPath = trimmed.replace(/^\/?uploads\//, '');
+      const cropDirective = crop && crop !== 'fit' ? `,c_${crop}` : '';
+      return `/media/w_${width},q_${quality}${cropDirective}/${relPath}`;
+    }
+
+    if (trimmed.includes('queryindo.com/uploads/')) {
+      const parts = trimmed.split('/uploads/');
+      if (parts[1]) {
+        const cropDirective = crop && crop !== 'fit' ? `,c_${crop}` : '';
+        return `/media/w_${width},q_${quality}${cropDirective}/${parts[1]}`;
+      }
+    }
+
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+      if (trimmed.startsWith('data:') || trimmed.endsWith('.svg')) {
+        return trimmed;
+      }
+      return `/media/resizer?w=${width}&q=${quality}&url=${encodeURIComponent(trimmed)}`;
+    }
+
+    return trimmed;
+  }
+
   public static getVerifiedBadgeHTML(size: number = 16, title: string = 'Dewan Redaksi Terverifikasi'): string {
     return `<span class="verified-badge-wrap" title="${title}" style="display:inline-flex; align-items:center; vertical-align:middle; margin-left:4px; flex-shrink:0;">
       <svg class="verified-badge-svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
