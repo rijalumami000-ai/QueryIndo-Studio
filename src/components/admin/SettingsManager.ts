@@ -1,3 +1,4 @@
+import { ApiService } from '../../services/apiService';
 import { AuthService } from '../../services/authService';
 import { SocialMediaService, PLATFORM_METAS } from '../../services/socialMediaService';
 import { Toast } from '../../utils/toast';
@@ -207,12 +208,87 @@ export class SettingsManager {
           </div>
         </div>
 
+        <!-- CDN & Cloudflare Edge Cache Management Panel -->
+        ${isSuperuser ? `
+        <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                <span style="font-size: 0.68rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-amber); font-family: var(--font-mono);">INFRASTRUKTUR</span>
+              </div>
+              <h3 style="font-size: 0.95rem; font-weight: 700; margin: 0 0 0.2rem 0; color: var(--text-primary);">CDN & Cloudflare Edge Caching</h3>
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">
+                Kelola cache halaman publik di edge server Cloudflare. Otomatis terpurge saat artikel diperbarui.
+              </p>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+            <span id="cdn-status-badge" style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.75rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 0.78rem; font-weight: 700; color: var(--text-muted);">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              Memeriksa status...
+            </span>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <button id="btn-purge-homepage" style="padding: 0.5rem 1rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg>
+              Bersihkan Cache Beranda
+            </button>
+            <button id="btn-purge-everything" style="padding: 0.5rem 1rem; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: var(--radius-sm); color: var(--accent-rose); font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+              Bersihkan Seluruh Cache
+            </button>
+          </div>
+
+          <div id="cdn-purge-log" style="display: none; padding: 0.65rem 0.85rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 0.75rem; font-family: var(--font-mono); color: var(--text-muted);"></div>
+        </div>
+        ` : ''}
+
       </div>
     `;
   }
 
   public static bindEvents(modalElem: HTMLElement, onSwitchToSocial: () => void, onRefresh: () => void) {
     const user = AuthService.getCurrentUser();
+
+    // CDN Status Check & Purge Bindings
+    (async () => {
+      try {
+        const status = await ApiService.getCDNStatus();
+        const badge = modalElem.querySelector('#cdn-status-badge');
+        if (badge) {
+          if (status.configured) {
+            badge.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent-emerald)" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> <span style="color: var(--accent-emerald);">Cloudflare Edge: Aktif</span> <span style="color: var(--text-muted); font-weight: 400;">(Zone: ${status.zone_id})</span>`;
+          } else {
+            badge.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent-amber)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> <span style="color: var(--accent-amber);">Belum Terkonfigurasi</span>`;
+          }
+        }
+      } catch {}
+    })();
+
+    // Purge Homepage
+    modalElem.querySelector('#btn-purge-homepage')?.addEventListener('click', async () => {
+      const logEl = modalElem.querySelector('#cdn-purge-log') as HTMLElement;
+      if (logEl) { logEl.style.display = 'block'; logEl.textContent = '⏳ Membersihkan cache beranda...'; }
+      const res = await ApiService.purgeCDNCache(false, ['https://queryindo.com/', 'https://www.queryindo.com/']);
+      if (logEl) {
+        logEl.textContent = res.success ? '✅ ' + res.message : '❌ ' + res.message;
+        logEl.style.color = res.success ? 'var(--accent-emerald)' : 'var(--accent-rose)';
+      }
+    });
+
+    // Purge Everything
+    modalElem.querySelector('#btn-purge-everything')?.addEventListener('click', async () => {
+      if (!confirm('Apakah Anda yakin ingin membersihkan SELURUH cache Cloudflare?\n\nSemua halaman akan di-regenerate pada kunjungan berikutnya. Ini dapat menyebabkan peningkatan beban server sementara.')) return;
+      const logEl = modalElem.querySelector('#cdn-purge-log') as HTMLElement;
+      if (logEl) { logEl.style.display = 'block'; logEl.textContent = '⏳ Membersihkan seluruh cache zona...'; }
+      const res = await ApiService.purgeCDNCache(true);
+      if (logEl) {
+        logEl.textContent = res.success ? '✅ ' + res.message : '❌ ' + res.message;
+        logEl.style.color = res.success ? 'var(--accent-emerald)' : 'var(--accent-rose)';
+      }
+    });
 
     // Quick jump to Social Media settings
     modalElem.querySelector('#btn-goto-social-settings')?.addEventListener('click', () => {

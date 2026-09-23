@@ -854,6 +854,46 @@ export class ApiService {
       return { success: false, message: 'Gagal menghapus pengguna di server: ' + (err?.message || '') };
     }
   }
+
+  // ─── CDN & Cloudflare Edge Cache Management ───────────────────────────────
+
+  // Get CDN integration status
+  public static async getCDNStatus(): Promise<{ configured: boolean; zone_id: string; provider: string }> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/cdn/status`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && json.data) {
+          return json.data;
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to fetch CDN status', err);
+    }
+    return { configured: false, zone_id: '', provider: 'Cloudflare' };
+  }
+
+  // Purge CDN cache (requires superuser auth)
+  public static async purgeCDNCache(purgeAll: boolean, urls?: string[]): Promise<{ success: boolean; message: string }> {
+    try {
+      const body: Record<string, unknown> = {};
+      if (purgeAll) {
+        body.purge_everything = true;
+      } else if (urls && urls.length > 0) {
+        body.urls = urls;
+      } else {
+        return { success: false, message: 'Harap tentukan target purge' };
+      }
+
+      const res = await fetch(`${API_BASE_URL}/cdn/purge`, {
+        method: 'POST',
+        headers: this.getAuthHeaders(),
+        body: JSON.stringify(body)
+      });
+      const json = await res.json();
+      return { success: res.ok && json.success, message: json.message || '' };
+    } catch (err: any) {
+      return { success: false, message: 'Gagal menghubungi server CDN: ' + (err?.message || '') };
+    }
+  }
 }
-
-
