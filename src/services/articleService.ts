@@ -75,12 +75,31 @@ export class ArticleService {
   }
 
   public static saveArticles(articles: Article[]): void {
+    const existingContentMap = new Map<string, string>();
+    if (this.cachedArticles) {
+      this.cachedArticles.forEach(a => {
+        if (a && a.content && a.content.trim().length > 0) {
+          if (a.id) existingContentMap.set(a.id, a.content);
+          if (a.slug) existingContentMap.set(a.slug, a.content);
+        }
+      });
+    }
+
     const cleanArticles = (articles || [])
       .filter(a => a && a.id && !isMockArticleId(a.id))
-      .map(a => ({
-        ...a,
-        imageUrl: ImageUtils.normalizeImageUrl(a.imageUrl || '')
-      }));
+      .map(a => {
+        const existingContent = existingContentMap.get(a.id) || (a.slug ? existingContentMap.get(a.slug) : undefined);
+        const resolvedContent = (a.content && a.content.trim().length > 0)
+          ? a.content
+          : (existingContent && existingContent.trim().length > 0 ? existingContent : (a.subtitle ? `<p class="article-lead">${a.subtitle}</p>` : ''));
+
+        return {
+          ...a,
+          content: resolvedContent,
+          imageUrl: ImageUtils.normalizeImageUrl(a.imageUrl || '')
+        };
+      });
+
     this.cachedArticles = cleanArticles;
     if (typeof localStorage !== 'undefined') {
       try {
@@ -91,7 +110,7 @@ export class ArticleService {
     }
   }
 
-  public static async syncWithBackend(includeContent: boolean = false): Promise<Article[]> {
+  public static async syncWithBackend(includeContent: boolean = true): Promise<Article[]> {
     try {
       const serverArticles = await ApiService.getArticles(undefined, undefined, includeContent);
       if (Array.isArray(serverArticles) && serverArticles.length > 0) {
@@ -109,9 +128,9 @@ export class ArticleService {
   }
 
   // Fetch full article detail on demand if content is not loaded yet
-  public static async fetchArticleDetail(idOrSlug: string): Promise<Article | undefined> {
+  public static async fetchArticleDetail(idOrSlug: string, forceFresh: boolean = false): Promise<Article | undefined> {
     const existing = this.getArticleBySlugOrId(idOrSlug);
-    if (existing && existing.content && existing.content.trim().length > 0) {
+    if (!forceFresh && existing && existing.content && existing.content.trim().length > 200 && existing.content !== `<p class="article-lead">${existing.subtitle}</p>`) {
       return existing;
     }
 
@@ -125,7 +144,7 @@ export class ArticleService {
       } else {
         list.push(fresh);
       }
-      this.cachedArticles = list;
+      this.saveArticles(list);
       return fresh;
     }
     return existing;
